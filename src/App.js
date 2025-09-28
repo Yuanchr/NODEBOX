@@ -8,23 +8,17 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-export default function Board() {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null));
-
+function Board({ xIsNext, squares, onPlay }) {
   function handleClick(i) {
-    //点击时 判断是否已点击，判断是否胜利
+    //点击后 判断是否之前点击过，判断是否胜利
     if (squares[i] || calculateWinner(squares)) return;
 
     const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = "X";
-    }
-    if (!xIsNext) {
-      nextSquares[i] = "O";
-    }
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    //判断到谁下以此来赋什么值
+    nextSquares[i] = xIsNext ? "X" : "O";
+
+    //将当前步骤的状态返回到Game
+    onPlay(nextSquares);
   }
 
   //提示某一方胜利
@@ -61,6 +55,62 @@ export default function Board() {
   );
 }
 
+export default function Game() {
+  //同步记录到谁下，以及添加历史记录
+  const [xIsNext, setXIsNext] = useState(true);
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+
+  //跟踪用户正在查看的步骤
+  const [currentMove, setCurrentMove] = useState(0);
+
+  //currentSquares 获得每一次的记录（每次只统计最后一个）
+  // const currentSquares = history[history.length - 1];
+  const currentSquares = history[currentMove];
+
+  function handlePlay(nextSquares) {
+    //更新历史记录、切换玩家
+    // setHistory([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+
+    //更新历史优化
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  }
+
+  //返回历史记录，如果步数为偶数则设置xIsNext为true
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+    setXIsNext(nextMove % 2 === 0);
+  }
+
+  const moves = history.map((squares, move) => {
+    let description;
+    if (move > 0) {
+      description = "Go to move #" + move;
+    } else {
+      description = "Go to game start";
+    }
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        {/*依次是 角色交替状态 最后一行状态 点击后的回调函数*/}
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{moves}</ol>
+      </div>
+    </div>
+  );
+}
+
 //判断获胜条件
 function calculateWinner(squares) {
   const lines = [
@@ -75,6 +125,7 @@ function calculateWinner(squares) {
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
+    //判断第一位是否为空，第一位和第二位是否相同，第一位和第三位是否相同
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c])
       return squares[a];
   }
