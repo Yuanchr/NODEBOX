@@ -1,1 +1,1 @@
-Conventional Commits（约定式提交）笔记
+Conventional Commits（规范提交）笔记
