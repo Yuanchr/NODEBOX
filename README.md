@@ -1,4 +1,75 @@
-Conventional Commits（规范提交）笔记
+# 核心概念
+
+## 分支（Branch）
+
+    分支是代码仓库的一个独立副本，用于在不影响主代码（通常是main或master分支）的情况下开发新功能、修复 bug。
+    ·主分支（main）：存放稳定、可发布的代码。
+    ·功能分支（如feature/login）：用于开发新功能。
+    ·修复分支（如bugfix/error-handle）：用于修复特定问题。
+
+## Commit
+
+    提交（Commit）是对代码修改的一次快照记录，包含修改内容、描述信息和作者等。每次提交都会生成一个唯一的哈希值，便于追溯历史。
+    ·作用：保存当前代码状态，方便回滚或查看变更。
+
+## Pull Request（PR/MR）
+
+    拉取请求（PR）是一种机制，用于将一个分支的代码合并到另一个分支（通常是主分支）前，发起代码审查和讨论。
+    ·作用：确保代码质量，通过团队评审后再合并，避免直接修改主分支。
+
+# 标准工作流程
+
+    以团队开发一个新功能为例，完整流程如下：
+
+## 创建分支
+
+    从主分支（main）创建一个新的功能分支，例如feature/user-profile：
+        bash
+            git checkout main       # 切换到主分支
+            git pull                # 拉取最新代码
+            git checkout -b feature/user-profile  # 创建并切换到新分支
+
+## 开发与提交（Commit）
+
+    在新分支上编写代码，完成后提交修改：
+        bash
+            git add .               # 暂存所有修改
+            git commit -m "完成用户资料页面UI"  # 提交并添加描述
+            可多次提交，每次提交应聚焦一个具体功能或修复。
+
+## 推送分支到远程仓库
+
+    将本地分支推送到远程仓库（如 GitHub/GitLab），便于团队共享：
+        bash
+            git push -u origin feature/user-profile
+
+## 创建 Pull Request
+
+    在远程仓库（如 GitHub）上，通过界面选择目标分支（如main）和当前分支（feature/user-profile），创建 PR。
+    填写 PR 描述（功能说明、测试情况等），并指定 reviewers（评审人）。
+
+## 代码审查与修改
+
+    评审人检查代码，提出修改意见。
+    开发者根据意见在本地分支修改后，再次提交并推送：
+        bash
+            git add .
+            git commit -m "修复用户名输入验证问题"
+            git push  # 推送后，PR会自动更新
+
+## 合并 PR
+
+    评审通过后，由项目负责人将 PR 合并到主分支（main）。
+    合并后可删除功能分支（清理仓库）。
+
+## 同步主分支代码
+
+    合并后，本地主分支需同步远程最新代码：
+        bash
+            git checkout main
+            git pull
+
+# Conventional Commits（规范提交）笔记
 
 ## 规范提交模板
 
