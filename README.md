@@ -1,4 +1,75 @@
-Conventional Commits（规范提交）笔记
+# 核心概念
+
+## 分支（Branch）
+
+    分支是代码仓库的一个独立副本，用于在不影响主代码（通常是main或master分支）的情况下开发新功能、修复 bug。
+    ·主分支（main）：存放稳定、可发布的代码。
+    ·功能分支（如feature/login）：用于开发新功能。
+    ·修复分支（如bugfix/error-handle）：用于修复特定问题。
+
+## Commit
+
+    提交（Commit）是对代码修改的一次快照记录，包含修改内容、描述信息和作者等。每次提交都会生成一个唯一的哈希值，便于追溯历史。
+    ·作用：保存当前代码状态，方便回滚或查看变更。
+
+## Pull Request（PR/MR）
+
+    拉取请求（PR）是一种机制，用于将一个分支的代码合并到另一个分支（通常是主分支）前，发起代码审查和讨论。
+    ·作用：确保代码质量，通过团队评审后再合并，避免直接修改主分支。
+
+# 标准工作流程
+
+    以团队开发一个新功能为例，完整流程如下：
+
+## 创建分支
+
+    从主分支（main）创建一个新的功能分支，例如feature/user-profile：
+        bash
+            git checkout main       # 切换到主分支
+            git pull                # 拉取最新代码
+            git checkout -b feature/user-profile  # 创建并切换到新分支
+
+## 开发与提交（Commit）
+
+    在新分支上编写代码，完成后提交修改：
+        bash
+            git add .               # 暂存所有修改
+            git commit -m "完成用户资料页面UI"  # 提交并添加描述
+            可多次提交，每次提交应聚焦一个具体功能或修复。
+
+## 推送分支到远程仓库
+
+    将本地分支推送到远程仓库（如 GitHub/GitLab），便于团队共享：
+        bash
+            git push -u origin feature/user-profile
+
+## 创建 Pull Request
+
+    在远程仓库（如 GitHub）上，通过界面选择目标分支（如main）和当前分支（feature/user-profile），创建 PR。
+    填写 PR 描述（功能说明、测试情况等），并指定 reviewers（评审人）。
+
+## 代码审查与修改
+
+    评审人检查代码，提出修改意见。
+    开发者根据意见在本地分支修改后，再次提交并推送：
+        bash
+            git add .
+            git commit -m "修复用户名输入验证问题"
+            git push  # 推送后，PR会自动更新
+
+## 合并 PR
+
+    评审通过后，由项目负责人将 PR 合并到主分支（main）。
+    合并后可删除功能分支（清理仓库）。
+
+## 同步主分支代码
+
+    合并后，本地主分支需同步远程最新代码：
+        bash
+            git checkout main
+            git pull
+
+# Conventional Commits（规范提交）笔记
 
 ## 规范提交模板
 
@@ -67,185 +138,186 @@ Conventional Commits（规范提交）笔记
 
 ## 其他细节补充
 
-    ### 1.每个提交都必须使用类型字段前缀，它由一个名词构成，诸如 feat 或 fix ， 其后接可选的范围字段，可选的 !，以及必要的冒号（英文半角）和空格。
+### 1.每个提交都必须使用类型字段前缀，它由一个名词构成，诸如 feat 或 fix ， 其后接可选的范围字段，可选的 !，以及必要的冒号（英文半角）和空格。
 
-        正确例子
-            feat: 添加购物车功能
-            fix(auth): 修复登录验证问题
-            refactor!: 重构用户服务类
+    正确例子
+        feat: 添加购物车功能
+        fix(auth): 修复登录验证问题
+        refactor!: 重构用户服务类
 
-        错误例子
-            添加购物车功能          # 缺少类型前缀
-            feat : 添加功能         # 冒号前有空格
-            feat:添加功能           # 冒号后缺少空格
+    错误例子
+        添加购物车功能          # 缺少类型前缀
+        feat : 添加功能         # 冒号前有空格
+        feat:添加功能           # 冒号后缺少空格
 
-    ### 2.当一个提交为应用或类库实现了新功能时，必须使用 feat 类型。
+### 2.当一个提交为应用或类库实现了新功能时，必须使用 feat 类型。
 
-        正确例子
-            feat: 新增商品搜索功能
-            feat(payment): 集成支付宝支付
+    正确例子
+        feat: 新增商品搜索功能
+        feat(payment): 集成支付宝支付
 
-        错误例子
-            add: 新增商品搜索功能    # 应该用feat，不是add
-            update: 添加支付功能    # 应该用feat
+    错误例子
+        add: 新增商品搜索功能    # 应该用feat，不是add
+        update: 添加支付功能    # 应该用feat
 
-    ### 3.当一个提交为应用修复了 bug 时，必须使用 fix 类型。
+### 3.当一个提交为应用修复了 bug 时，必须使用 fix 类型。
 
-        正确例子
-            fix: 修复订单金额计算错误
-            fix(database): 修复连接池泄露问题
+    正确例子
+        fix: 修复订单金额计算错误
+        fix(database): 修复连接池泄露问题
 
-        错误例子
-            bugfix: 修复计算错误     # 应该用fix
-            correct: 修正金额问题   # 应该用fix
+    错误例子
+        bugfix: 修复计算错误     # 应该用fix
+        correct: 修正金额问题   # 应该用fix
 
-    ### 4.范围字段可以跟随在类型字段后面。范围必须是一个描述某部分代码的名词，并用圆括号包围，例如： fix(parser):
+### 4.范围字段可以跟随在类型字段后面。范围必须是一个描述某部分代码的名词，并用圆括号包围，例如： fix(parser):
 
-        正确例子
-            feat(user): 添加用户头像上传
-            fix(api): 修复接口超时问题
+    正确例子
+        feat(user): 添加用户头像上传
+        fix(api): 修复接口超时问题
 
-        错误例子
-        feat[user]: 添加功能     # 应该用圆括号
-        fix(修复bug): 处理问题   # 范围应该是名词，不是动词短语
+    错误例子
+    feat[user]: 添加功能     # 应该用圆括号
+    fix(修复bug): 处理问题   # 范围应该是名词，不是动词短语
 
-    ### 5.描述字段必须直接跟在 <类型>(范围) 前缀的冒号和空格之后。 描述指的是对代码变更的简短总结，例如： fix: array parsing issue when multiple spaces were contained in string 。
+### 5.描述字段必须直接跟在 <类型>(范围) 前缀的冒号和空格之后。 描述指的是对代码变更的简短总结，例如： fix: array parsing issue when multiple spaces were contained in string 。
 
-        正确例子
-            fix: 修复数组解析时包含多个空格的问题
-            feat(parser): 支持JSON5格式解析
+    正确例子
+        fix: 修复数组解析时包含多个空格的问题
+        feat(parser): 支持JSON5格式解析
 
-        错误例子
-            fix:修复数组解析问题      # 冒号后缺少空格
-            feat(parser) : 支持JSON5 # 括号和冒号间有空格
+    错误例子
+        fix:修复数组解析问题      # 冒号后缺少空格
+        feat(parser) : 支持JSON5 # 括号和冒号间有空格
 
-    ### 6.在简短描述之后，可以编写较长的提交正文，为代码变更提供额外的上下文信息。正文必须起始于描述字段结束的一个空行后。
+### 6.在简短描述之后，可以编写较长的提交正文，为代码变更提供额外的上下文信息。正文必须起始于描述字段结束的一个空行后。
 
-        正确例子
-            feat: 实现图片压缩功能
+    正确例子
+        feat: 实现图片压缩功能
 
-            使用Sharp库对上传的图片进行自动压缩，支持JPEG和PNG格式。
+        使用Sharp库对上传的图片进行自动压缩，支持JPEG和PNG格式。
 
-        错误例子
-            feat: 实现图片压缩功能
-            使用Sharp库对上传的图片进行自动压缩。 # 缺少空行分隔
+    错误例子
+        feat: 实现图片压缩功能
+        使用Sharp库对上传的图片进行自动压缩。 # 缺少空行分隔
 
-    ### 7.提交的正文内容自由编写，并可以使用空行分隔不同段落。
+### 7.提交的正文内容自由编写，并可以使用空行分隔不同段落。
 
-        正确例子
-            refactor: 优化数据库查询性能
+    正确例子
+        refactor: 优化数据库查询性能
 
-            重构用户信息查询逻辑，减少不必要的联表查询。
+        重构用户信息查询逻辑，减少不必要的联表查询。
 
-            具体改进：
-            - 使用JOIN替代多次查询
-            - 添加必要的数据库索引
-            - 缓存常用查询结果
+        具体改进：
+        - 使用JOIN替代多次查询
+        - 添加必要的数据库索引
+        - 缓存常用查询结果
 
-            性能提升：
-            用户列表查询时间从2秒降低到200毫秒。
+        性能提升：
+        用户列表查询时间从2秒降低到200毫秒。
 
-    ### 8.在正文结束的一个空行之后，可以编写一行或多行脚注。每行脚注都必须包含 一个令牌（token），后面紧跟 :<space> 或 <space># 作为分隔符，后面再紧跟令牌的值（受 git trailer convention 启发）。
+### 8.在正文结束的一个空行之后，可以编写一行或多行脚注。每行脚注都必须包含 一个令牌（token），后面紧跟 :<space> 或 <space># 作为分隔符，后面再紧跟令牌的值（受 git trailer convention 启发）。
 
-        正确例子
-            1.
-            feat: 新增导出功能
+    正确例子
+        1.
+        feat: 新增导出功能
 
-            Fixes: #123
-            Reviewed-by: 张三
+        Fixes: #123
+        Reviewed-by: 张三
 
-            2.
-            fix: 修复数据同步问题
+        2.
+        fix: 修复数据同步问题
 
-            Closes #456
-            See also #789
+        Closes #456
+        See also #789
 
-        错误例子
-            feat: 新增功能
-            Fixes:#123          # 缺少空格
-            Closes#456          # 缺少空格
+    错误例子
+        feat: 新增功能
+        Fixes:#123          # 缺少空格
+        Closes#456          # 缺少空格
 
-    ### 9.脚注的令牌必须使用 - 作为连字符，比如 Acked-by (这样有助于 区分脚注和多行正文)。有一种例外情况就是 BREAKING CHANGE，它可以被认为是一个令牌。
+### 9.脚注的令牌必须使用 - 作为连字符，比如 Acked-by (这样有助于 区分脚注和多行正文)。有一种例外情况就是 BREAKING CHANGE，它可以被认为是一个令牌。
 
-        正确例子
-            docs: 更新API文档
+    正确例子
+        docs: 更新API文档
 
-            Reviewed-by: 李四
-            Acked-by: 王五
-            Tested-by: 测试组
+        Reviewed-by: 李四
+        Acked-by: 王五
+        Tested-by: 测试组
 
-        错误例子
-            docs: 更新文档
-            Reviewed_by: 李四    # 应该用连字符
-            AckedBy: 王五        # 应该用连字符
+    错误例子
+        docs: 更新文档
+        Reviewed_by: 李四    # 应该用连字符
+        AckedBy: 王五        # 应该用连字符
 
-    ### 10.脚注的值可以包含空格和换行，值的解析过程必须直到下一个脚注的令牌/分隔符出现为止。
+### 10.脚注的值可以包含空格和换行，值的解析过程必须直到下一个脚注的令牌/分隔符出现为止。
 
-        正确例子
-            feat: 新增复杂配置系统
+    正确例子
+        feat: 新增复杂配置系统
 
-            BREAKING CHANGE: 配置文件格式完全改变，
-            现在支持嵌套配置和环境变量替换。
-            请参考迁移指南：docs/configuration-migration.md
-            Reviewed-by: 架构组
-            Fixes: #333
+        BREAKING CHANGE: 配置文件格式完全改变，
+        现在支持嵌套配置和环境变量替换。
+        请参考迁移指南：docs/configuration-migration.md
+        Reviewed-by: 架构组
+        Fixes: #333
 
-    ### 11.破坏性变更必须在提交信息中标记出来，要么在 <类型>(范围) 前缀中标记，要么作为脚注的一项。
+### 11.破坏性变更必须在提交信息中标记出来，要么在 <类型>(范围) 前缀中标记，要么作为脚注的一项。
 
-        正确例子
-            1.
-            feat(api)!: 重构数据返回格式
+    正确例子
+        1.
+        feat(api)!: 重构数据返回格式
 
-            2.
-            feat: 重构数据返回格式
+        2.
+        feat: 重构数据返回格式
 
-            BREAKING CHANGE: 返回格式从数组改为对象
-    ### 12.包含在脚注中时，破坏性变更必须包含大写的文本 BREAKING CHANGE，后面紧跟着冒号、空格，然后是描述，例如： BREAKING CHANGE: environment variables now take precedence over config files 。
+        BREAKING CHANGE: 返回格式从数组改为对象
 
-        正确例子
-            refactor: 统一错误处理机制
+### 12.包含在脚注中时，破坏性变更必须包含大写的文本 BREAKING CHANGE，后面紧跟着冒号、空格，然后是描述，例如： BREAKING CHANGE: environment variables now take precedence over config files 。
 
-            BREAKING CHANGE: 所有API错误响应格式已标准化，
-            错误代码体系重新设计，请更新客户端错误处理逻辑。
+    正确例子
+        refactor: 统一错误处理机制
 
-        错误例子
-            refactor: 统一错误处理
+        BREAKING CHANGE: 所有API错误响应格式已标准化，
+        错误代码体系重新设计，请更新客户端错误处理逻辑。
 
-            breaking change: 错误格式变化  # 必须大写
-            BREAKING CHANGE:格式变化      # 冒号后缺少空格
+    错误例子
+        refactor: 统一错误处理
 
-    ### 13.包含在 <类型>(范围) 前缀时，破坏性变更必须通过把 ! 直接放在 : 前面标记出来。 如果使用了 !，那么脚注中可以不写 BREAKING CHANGE:， 同时提交信息的描述中应该用来描述破坏性变更。
+        breaking change: 错误格式变化  # 必须大写
+        BREAKING CHANGE:格式变化      # 冒号后缺少空格
 
-        正确例子
-            feat!: 移除已废弃的API接口
-            refactor(database)!: 更改数据表结构
+### 13.包含在 <类型>(范围) 前缀时，破坏性变更必须通过把 ! 直接放在 : 前面标记出来。 如果使用了 !，那么脚注中可以不写 BREAKING CHANGE:， 同时提交信息的描述中应该用来描述破坏性变更。
 
-        错误例子
-            feat! : 移除接口    # !和:之间不能有空格
-            feat!:移除接口      # !:后缺少空格
+    正确例子
+        feat!: 移除已废弃的API接口
+        refactor(database)!: 更改数据表结构
 
-    ### 14.在提交说明中，可以使用 feat 和 fix 之外的类型，比如：docs: updated ref docs. 。
+    错误例子
+        feat! : 移除接口    # !和:之间不能有空格
+        feat!:移除接口      # !:后缺少空格
 
-        正确例子
-            docs: 更新项目README文件
-            style: 统一代码缩进格式
-            test: 添加用户登录测试用例
-            chore: 更新项目依赖版本
-            perf: 优化图片加载性能
-            build: 升级Webpack配置
-            ci: 配置GitHub Actions
-            refactor: 重构工具函数
+### 14.在提交说明中，可以使用 feat 和 fix 之外的类型，比如：docs: updated ref docs. 。
 
-    ### 15.工具的实现必须不区分大小写地解析构成约定式提交的信息单元，只有 BREAKING CHANGE 必须是大写的。
+    正确例子
+        docs: 更新项目README文件
+        style: 统一代码缩进格式
+        test: 添加用户登录测试用例
+        chore: 更新项目依赖版本
+        perf: 优化图片加载性能
+        build: 升级Webpack配置
+        ci: 配置GitHub Actions
+        refactor: 重构工具函数
 
-            Feat:、FEAT:、feat: 都视为 feat:
-            Fix(parser):、FIX(PARSER): 都视为 fix(parser):
-            但 breaking change: 不会被识别，必须用 BREAKING CHANGE:
+### 15.工具的实现必须不区分大小写地解析构成约定式提交的信息单元，只有 BREAKING CHANGE 必须是大写的。
 
-    ### 16.BREAKING-CHANGE 作为脚注的令牌时必须是 BREAKING CHANGE 的同义词。
+        Feat:、FEAT:、feat: 都视为 feat:
+        Fix(parser):、FIX(PARSER): 都视为 fix(parser):
+        但 breaking change: 不会被识别，必须用 BREAKING CHANGE:
 
-        正确例子
-            feat: 更改认证方式
+### 16.BREAKING-CHANGE 作为脚注的令牌时必须是 BREAKING CHANGE 的同义词。
 
-            BREAKING-CHANGE: 从Session认证改为JWT Token认证
-            //等同于 BREAKING CHANGE:
+    正确例子
+        feat: 更改认证方式
+
+        BREAKING-CHANGE: 从Session认证改为JWT Token认证
+        //等同于 BREAKING CHANGE:
